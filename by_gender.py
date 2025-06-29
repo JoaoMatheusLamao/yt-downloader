@@ -2,54 +2,32 @@ import os
 
 import yt_dlp
 
-artistas = [
-    "Gustavo Lima",
-    "Ana Castela",
-    "Marília Mendonça",
-    "Zezé Di Camargo & Luciano",
-    "Henrique e Juliano",
-    "Luan Santana",
-    "Jorge e Mateus",
-    "Chitãozinho e Xororó",
-    "Matheus e Kauan",
-    "Maiara e Maraisa",
-    "Zé Neto e Cristiano",
-    "Cesar Menotti e Fabiano",
-    "Fernando e Sorocaba",
-    "Bruno e Marrone",
-    "Daniel Oficial",
-    "João Mineiro e Marciano",
-    "Leandro e Leonardo",
-    "Roberto Carlos",
-    "Milionário e José Rico",
-    "Almir Sater",
-    "Fábio Jr.",
-    "Legiao Urbana",
-    "Titãs",
-    "Roupa Nova",
-    "Skank"
-    "Paralamas do Sucesso",
-    "Cassia Eller",
-    "Legiao Urbana",
-    "Barão Vermelho"
-]
-
 PASTA_DESTINO = "downloads"
-TEMPO_MAXIMO = 8 * 60  # 8 minutos em segundos
+TEMPO_MAXIMO = 8 * 60
 TEMPO_MINIMO = 80  # 80 segundos
 PALAVRAS_PROIBIDAS = ["greatest", "hits", "full album", "best of", "the best"]
+ARQUIVO_BAIXADOS = "baixados.txt"
+
+generos = ["internacional anos 90"]
+
+def carregar_baixados():
+    if not os.path.isfile(ARQUIVO_BAIXADOS):
+        return set()
+    with open(ARQUIVO_BAIXADOS, "r", encoding="utf-8") as f:
+        return set(linha.strip() for linha in f)
+
+def salvar_baixados(urls):
+    with open(ARQUIVO_BAIXADOS, "a", encoding="utf-8") as f:
+        for url in urls:
+            f.write(url + "\n")
 
 def eh_compilacao(titulo, duracao):
     titulo_lower = titulo.lower()
-    return (
-        any(p in titulo_lower for p in PALAVRAS_PROIBIDAS)
-        or duracao > TEMPO_MAXIMO
-        or duracao < TEMPO_MINIMO
-    )
+    return any(p in titulo_lower for p in PALAVRAS_PROIBIDAS) or duracao > TEMPO_MAXIMO or duracao < TEMPO_MINIMO
 
-def baixar_top_filtrado(artista):
-    print(f"\nBuscando top músicas de: {artista}")
-    query = f"ytsearch20:{artista}"
+def baixar_top_50_ignorando_baixados(genero):
+    print(f"\nBuscando top 25 músicas do gênero: {genero} (filtrando já baixados)")
+    query = f"ytsearch25:{genero}"
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -59,6 +37,7 @@ def baixar_top_filtrado(artista):
         'skip_download': True,
     }
 
+    baixados = carregar_baixados()
     musicas_validas = []
 
     try:
@@ -71,20 +50,24 @@ def baixar_top_filtrado(artista):
                 duracao = entrada['duration']
                 url = entrada['webpage_url']
 
+                if url in baixados:
+                    print(f"Ignorando já baixado: {titulo}")
+                    continue
+
                 if not eh_compilacao(titulo, duracao):
                     musicas_validas.append(url)
                     print(f"Aceita: {titulo} ({duracao}s)")
                 else:
                     print(f"Ignorada: {titulo} ({duracao}s)")
 
-                if len(musicas_validas) == 20:
+                if len(musicas_validas) == 25:
                     break
 
         if not musicas_validas:
-            print(f"Nenhuma música individual válida encontrada para '{artista}'")
+            print(f"Nenhuma música válida nova encontrada para o gênero '{genero}'")
             return
 
-        print(f"Baixando {len(musicas_validas)} músicas...")
+        print(f"Baixando {len(musicas_validas)} músicas novas...")
 
         download_opts = {
             'format': 'bestaudio/best',
@@ -104,15 +87,17 @@ def baixar_top_filtrado(artista):
         with yt_dlp.YoutubeDL(download_opts) as ydl:
             ydl.download(musicas_validas)
 
+        salvar_baixados(musicas_validas)
+
         print(f"{len(musicas_validas)} músicas baixadas com sucesso!")
 
     except Exception as e:
-        print(f"Erro ao baixar músicas de '{artista}': {e}")
+        print(f"Erro ao baixar músicas do gênero '{genero}': {e}")
 
 def main():
 
-    for artista in artistas:
-        baixar_top_filtrado(artista)
+    for genero in generos:
+        baixar_top_50_ignorando_baixados(genero)
 
 if __name__ == "__main__":
     main()
