@@ -30,7 +30,7 @@ def baixar_top_50_ignorando_baixados(genero):
     query = f"ytsearch25:{genero}"
 
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
         'noplaylist': True,
         'quiet': True,
         'no_warnings': True,
@@ -70,16 +70,11 @@ def baixar_top_50_ignorando_baixados(genero):
         print(f"Baixando {len(musicas_validas)} músicas novas...")
 
         download_opts = {
-            'format': 'bestaudio/best',
+            'format': 'best',  # garante vídeo + áudio juntos
             'noplaylist': True,
             'outtmpl': os.path.join(PASTA_DESTINO, '%(title)s.%(ext)s'),
             'quiet': True,
             'no_warnings': True,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
         }
 
         os.makedirs(PASTA_DESTINO, exist_ok=True)

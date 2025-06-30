@@ -4,34 +4,6 @@ import yt_dlp
 
 artistas = [
     "Gustavo Lima",
-    "Ana Castela",
-    "Marília Mendonça",
-    "Zezé Di Camargo & Luciano",
-    "Henrique e Juliano",
-    "Luan Santana",
-    "Jorge e Mateus",
-    "Chitãozinho e Xororó",
-    "Matheus e Kauan",
-    "Maiara e Maraisa",
-    "Zé Neto e Cristiano",
-    "Cesar Menotti e Fabiano",
-    "Fernando e Sorocaba",
-    "Bruno e Marrone",
-    "Daniel Oficial",
-    "João Mineiro e Marciano",
-    "Leandro e Leonardo",
-    "Roberto Carlos",
-    "Milionário e José Rico",
-    "Almir Sater",
-    "Fábio Jr.",
-    "Legiao Urbana",
-    "Titãs",
-    "Roupa Nova",
-    "Skank"
-    "Paralamas do Sucesso",
-    "Cassia Eller",
-    "Legiao Urbana",
-    "Barão Vermelho"
 ]
 
 PASTA_DESTINO = "downloads"
@@ -52,11 +24,11 @@ def baixar_top_filtrado(artista):
     query = f"ytsearch20:{artista}"
 
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'noplaylist': True,
-        'quiet': True,
-        'no_warnings': True,
-        'skip_download': True,
+    'format': 'best',  # garante vídeo + áudio juntos
+    'noplaylist': True,
+    'outtmpl': os.path.join(PASTA_DESTINO, '%(title)s.%(ext)s'),
+    'quiet': True,
+    'no_warnings': True,
     }
 
     musicas_validas = []
@@ -87,7 +59,7 @@ def baixar_top_filtrado(artista):
         print(f"Baixando {len(musicas_validas)} músicas...")
 
         download_opts = {
-            'format': 'bestaudio/best',
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
             'noplaylist': True,
             'outtmpl': os.path.join(PASTA_DESTINO, '%(title)s.%(ext)s'),
             'quiet': True,
