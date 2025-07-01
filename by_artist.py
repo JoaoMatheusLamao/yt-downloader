@@ -4,6 +4,34 @@ import yt_dlp
 
 artistas = [
     "Gustavo Lima",
+    "Ana Castela",
+    "Marília Mendonça",
+    "Zezé Di Camargo & Luciano",
+    "Henrique e Juliano",
+    "Luan Santana",
+    "Jorge e Mateus",
+    "Chitãozinho e Xororó",
+    "Matheus e Kauan",
+    "Maiara e Maraisa",
+    "Zé Neto e Cristiano",
+    "Cesar Menotti e Fabiano",
+    "Fernando e Sorocaba",
+    "Bruno e Marrone",
+    "Daniel Oficial",
+    "João Mineiro e Marciano",
+    "Leandro e Leonardo",
+    "Roberto Carlos",
+    "Milionário e José Rico",
+    "Almir Sater",
+    "Fábio Jr.",
+    "Legiao Urbana",
+    "Titãs",
+    "Roupa Nova",
+    "Skank"
+    "Paralamas do Sucesso",
+    "Cassia Eller",
+    "Legiao Urbana",
+    "Barão Vermelho"
 ]
 
 PASTA_DESTINO = "downloads"
